@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-slateSoft text-slate-800;
+}
+
+.card {
+  @apply rounded-2xl bg-white shadow-sm border border-slate-200;
+}

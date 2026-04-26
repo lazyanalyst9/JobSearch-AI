@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id                String        @id @default(cuid())
+  name              String
+  email             String        @unique
+  phone             String?
+  university        String?
+  major             String?
+  graduationYear    Int?
+  skills            String[]
+  experienceLevel   String?
+  preferredJobRoles String[]
+  resumeUrl         String?
+  applications      Application[]
+  reminders         FollowUpReminder[]
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Job {
+  id             String        @id @default(cuid())
+  title          String
+  company        String
+  location       String
+  remoteType     String
+  employmentType String
+  level          String
+  optCptFriendly Boolean       @default(false)
+  featured       Boolean       @default(false)
+  skills         String[]
+  description    String
+  link           String
+  applications   Application[]
+  createdAt      DateTime      @default(now())
+}
+
+model Application {
+  id                String           @id @default(cuid())
+  studentId         String
+  jobId             String
+  dateApplied       DateTime         @default(now())
+  resumeVersionUsed String?
+  status            ApplicationStatus @default(APPLIED)
+  hrContactName     String?
+  hrEmail           String?
+  followUpDate      DateTime?
+  notes             String?
+  student           Student          @relation(fields: [studentId], references: [id])
+  job               Job              @relation(fields: [jobId], references: [id])
+}
+
+model FollowUpReminder {
+  id            String   @id @default(cuid())
+  studentId     String
+  applicationId String
+  reminderDate  DateTime
+  completed     Boolean  @default(false)
+  aiDraft       String
+  student       Student  @relation(fields: [studentId], references: [id])
+}
+
+enum ApplicationStatus {
+  APPLIED
+  INTERVIEWING
+  OFFER
+  REJECTED
+  FOLLOWED_UP
+}
